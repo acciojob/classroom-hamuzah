@@ -10,16 +10,12 @@ public class StudentRepository {
     private Map<String,ArrayList<String>> teacherStudentPair=new HashMap<String, ArrayList<String>>();
 
     public void addStudent(Student student) {
-        if(student.getName() != null){
-            System.out.println("Student already exits");
-        }
+
         studentDB.put(student.getName(),student);
     }
 
     public void addTeacher(Teacher teacher) {
-        if (teacher.getName() != null){
-            System.out.println("Teacher already exists");
-        }
+
         TeacherDB.put(teacher.getName(),teacher);
     }
 
