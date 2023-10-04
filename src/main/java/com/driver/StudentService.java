@@ -2,6 +2,7 @@ package com.driver;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +62,12 @@ public class StudentService {
     }
 
     public List<String> getAllStudent() {
-        return studentRepository.getAllStudent();
+        List<Student> list = studentRepository.getAllStudent();
+        List<String> studentList = new ArrayList<>();
+        for(Student student : list){
+            studentList.add(student.getName());
+        }
+        return studentList;
     }
 
 

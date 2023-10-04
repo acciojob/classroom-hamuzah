@@ -45,8 +45,12 @@ public class StudentRepository {
            return teacherStudentPair.getOrDefault(teacher,new ArrayList<>());
     }
 
-    public List<String> getAllStudent() {
-        return new ArrayList<>(studentDB.keySet());
+    public List<Student> getAllStudent() {
+        List<Student> list = new ArrayList<>();
+        for (Student student : studentDB.values()) {
+            list.add(student);
+        }
+        return list;
     }
 
     public void deleteTeacher(String teacher) {
