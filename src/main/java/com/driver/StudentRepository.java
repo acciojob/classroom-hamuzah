@@ -1,68 +1,74 @@
 package com.driver;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.*;
 
+
+@Repository
 public class StudentRepository {
 
-    HashMap<String,Student>studentDB = new HashMap<>();
-    HashMap<String,Teacher>TeacherDB = new HashMap<>();
+    private Map<String, Student> students = new HashMap<>(); // for Storing students data
+    private Map<String, Teacher> teachers = new HashMap<>();
+    private Map<String, List<String>> studentTeacherPairs = new HashMap<>();
 
-    private Map<String,ArrayList<String>> teacherStudentPair=new HashMap<String, ArrayList<String>>();
+    public void add(Student student) {
+        students.put(student.getName(), student);
+    }
 
-    public void addStudent(Student student) {
+    public Student getStudentByName(String name) {
+        return students.get(name);
+    }
 
-        studentDB.put(student.getName(),student);
+    public List<String> getAllStudents() {
+        return new ArrayList<>(students.keySet());
     }
 
     public void addTeacher(Teacher teacher) {
-
-        TeacherDB.put(teacher.getName(),teacher);
+        teachers.put(teacher.getName(), teacher);
     }
-
 
     public void addStudentTeacherPair(String student, String teacher) {
-        ArrayList<String> students=teacherStudentPair.getOrDefault(teacher,new ArrayList<String>());
-        students.add(student);
-        teacherStudentPair.put(teacher,students);
+        List<String> studentlist = new ArrayList<>();
+        if (studentTeacherPairs.containsKey(teacher))
+            studentlist = studentTeacherPairs.get(teacher);
+        if (!studentlist.contains(student))
+            studentlist.add(student);
+        studentTeacherPairs.put(teacher, studentlist);
     }
 
-    public Optional<Student> getstudent(String student) {
-        if(studentDB.containsKey(student)){
-            return Optional.of(studentDB.get(student));
+    public Teacher getTeacherByName(String name) {
+        return teachers.get(name);
+    }
+
+    public List<String> getStudentsByTeacherName(String teacher) {
+        List<String> studentlist = new ArrayList<>();
+        if (studentTeacherPairs.containsKey(teacher))
+            studentlist = studentTeacherPairs.get(teacher);
+        return studentlist;
+    }
+
+    public void deleteTeacherByName(String teacher) {
+        List<String> pairlist = new ArrayList<>();
+        if (studentTeacherPairs.containsKey(teacher)) {
+            pairlist = studentTeacherPairs.get(teacher);
+            for (String st : pairlist) {
+                students.remove(st);
+            }
+            studentTeacherPairs.remove(teacher);
         }
-        return Optional.empty();
-
+        teachers.remove(teacher);
     }
 
-    public Optional<Teacher> getTeacher(String teacher) {
-        if(TeacherDB.containsKey(teacher)){
-            return  Optional.of(TeacherDB.get(teacher));
+    public void deleteAllTeachers() {
+        for (String teacher : studentTeacherPairs.keySet()) {
+            List<String> pairlist = studentTeacherPairs.get(teacher);
+            for (String st : pairlist) {
+                if (students.containsKey(st))
+                    students.remove(st);
+            }
         }
-        return Optional.empty();
-    }
-
-    public List<String> getStudentByTeacherName(String teacher) {
-           return teacherStudentPair.getOrDefault(teacher,new ArrayList<>());
-    }
-
-    public List<Student> getAllStudent() {
-        List<Student> list = new ArrayList<>();
-        for (Student student : studentDB.values()) {
-            list.add(student);
-        }
-        return list;
-    }
-
-    public void deleteTeacher(String teacher) {
-        TeacherDB.remove(teacher);
-        teacherStudentPair.remove(teacher);
-    }
-
-    public void deleteStudent(String stud) {
-        studentDB.remove(stud);
-    }
-
-    public List<String> getAllTeacher() {
-        return new ArrayList<>(TeacherDB.keySet());
+        teachers.clear();
+        studentTeacherPairs.clear();
     }
 }
